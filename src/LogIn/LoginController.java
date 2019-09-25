@@ -21,7 +21,7 @@ public class LoginController {
     private PasswordField PassEntry;
     @FXML
     private Button LogIn;
-    @FXML
+
     public void processLogIn()
     {
         //System.out.println(EmailEntry.getText()+" "+PassEntry.getText());
@@ -45,19 +45,24 @@ public class LoginController {
 
                     int response=dbc.createNewDatabase();
 
-                    if(response==1)
+                    if(response==1) {
                         dbc.connect();
+                    }
                     if(response!=2){
                         FXMLLoader loader=new FXMLLoader(getClass().getClassLoader().getResource("Menu/Menu.fxml"));
                         root = loader.load();
                         //FXMLLoader.load(getClass().getClassLoader().getResource("Menu/Menu.fxml"));
                         MenuController mC=loader.getController();
                         mC.setCreds(user, pass);
+                        mC.setDBC(dbc);
+                        System.out.println(mC.getDbc()+"HERE 0");
 
                         Stage menuStage = new Stage();
                         menuStage.setTitle("Menu");
                         menuStage.setScene(new Scene(root));
+                        System.out.println(mC.getDbc()+"here 1");
                         menuStage.show();
+                        System.out.println(mC.getDbc()+"here 2");
                     }
                     else{
                         System.out.println("Pop: error 2");

@@ -35,7 +35,7 @@ public class dbCreator {
 
                     String sql = "CREATE TABLE IF NOT EXISTS ppl (\n"
                             + "	id integer PRIMARY KEY autoincrement,\n"
-                            + "	name text NOT NULL,\n"
+                            + "	fName text NOT NULL,\n"
                             + "	email text NOT NULL,\n"
                             + "	type text NOT NULL\n"
                             + ");";
@@ -75,13 +75,14 @@ public class dbCreator {
             }
         }
     }
-    public void insert(String name, String email, String type) {
-        String sql = "INSERT INTO ppl(name,email,type) VALUES(?,?,?)";
+    public void insert(String fName ,String sName, String email, String type) {
+        String sql = "INSERT INTO ppl(fName,sName,email,type) VALUES(?,?,?,?)";
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, name);
-            pstmt.setString(2, email);
-            pstmt.setString(3, type);
+            pstmt.setString(1, fName);
+            pstmt.setString(2, sName);
+            pstmt.setString(3, email);
+            pstmt.setString(4, type);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());

@@ -1,26 +1,37 @@
 package Menu;
 
+import LogIn.dbCreator;
 import javafx.application.Application;
+import javafx.event.EventHandler;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.RadioButton;
 
 
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class MenuController {
 
+
+
+    public void MenuController(dbCreator dbc)
+    {
+        this.dbc=dbc;
+    }
     String user;
     String pass;
+    private dbCreator dbc;
+    String test;
+
 
     @FXML
     private TextArea sNamesTextA;
@@ -34,8 +45,10 @@ public class MenuController {
     private RadioButton bbRB;
     @FXML
     private ToggleGroup typeGroup;
-    @FXML
 
+
+
+    @FXML
     public void addPepOAction()
     {
         Parent root;
@@ -46,22 +59,32 @@ public class MenuController {
             addPep.setTitle("Adding");
             addPep.setScene(new Scene(root));
             addPep.show();
-            System.out.println();
         }catch(IOException e){System.out.println("No MassAdd.fxml file found!");}
     }
     @FXML
     public void addPepAction()
     {
+
+        test="hey";
+        System.out.println(getDbc()+"HERE 3"+test);
         MenuModel mM=new MenuModel();
-        System.out.println("yes2");
-        System.out.println(clientRB.getText()+" " + clientRB.isSelected());
-        System.out.println(bbRB.isSelected());
+
         String fNames=fNamesTextA.getText();
         String sNames=sNamesTextA.getText();
         String emails=emailsTextA.getText();
 
-        System.out.println(mM.analyzeString(fNames,"name")+" with snames:"+mM.analyzeString(sNames,"name")+" and their emails:"+mM.analyzeString(emails,"email"));
-        System.out.println(getTheSelectedType());
+        ArrayList<String> fNamesL=mM.analyzeString(fNames,"name");
+        ArrayList<String>  sNamesL=mM.analyzeString(sNames,"name");
+        ArrayList<String>  emailsL=mM.analyzeString(emails,"email");
+//        System.out.println(clientRB.getText()+" " + clientRB.isSelected());// prints the radio button selected for client
+//        System.out.println(bbRB.isSelected());// prints rb for bb
+
+
+
+        String checkerMessage=mM.checkDataProvidedFDB(fNamesL,sNamesL,emailsL,getTheSelectedType());
+
+//////////////////error handling for type selected!!!!!!!!!
+
 
         //pop up window
         Stage dialog = new Stage();
@@ -71,36 +94,40 @@ public class MenuController {
         //selecting the window by its hierarchy and blocking untill the "dialog" stage is closed
 
         VBox dialogVbox = new VBox(20);
-        dialogVbox.getChildren().add(new Label("This is a Dialog"));
-        Scene dialogScene = new Scene(dialogVbox, 300, 200);
+        Button btn=new Button();
+
+        dialogVbox.getChildren().add(new Label(checkerMessage));
+        dialogVbox.getChildren().add(btn);
+        btn.setText("OK");
+        btn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                dialog.close();
+                if(checkerMessage.equals("Data accepted!")){
+                    for(int i=0;i<fNamesL.size();i++)
+                    {
+                        dbc.insert(fNamesL.get(i),sNamesL.get(i),emailsL.get(i),getTheSelectedType());
+                    }
+
+                    ((Stage) sNamesTextA.getScene().getWindow()).close();
+                }
+            }
+        });
+        Scene dialogScene = new Scene(dialogVbox, 400, 200);
         dialog.setScene(dialogScene);
         dialog.show();
+    }
+    public void setDBC(dbCreator dbc)
+    {
+        this.dbc=dbc;
+        System.out.println(this.dbc+"this");
+    }
+    public dbCreator getDbc() {
+        return dbc;
     }
     public void addDataInDB()
     {
 
-    }
-
-
-    /*
-    checkDataProvidedFDB will check the data passed through the TextAreas if its in the right format(for emails)
-    and also if they are the same number of items in each TextArea
-     */
-    public boolean checkDataProvidedFDB(ArrayList<String> names,ArrayList<String> sNames,ArrayList<String> emails)
-    {
-        boolean dataFitsDB=true;
-
-        if(names.size()==sNames.size() && sNames.size()==emails.size())
-        {
-            //here we will validate all the emails and if they are all ok then just let it append the data to DB..else dispay one of the emails isn t ok
-        }
-        else
-        {
-            //if it enters this that means the data introduced isn't the same size in every TextArea
-            dataFitsDB=false;
-            //then check what isn't the same size... just some if statements comparing the stuff
-        }
-        return dataFitsDB;
     }
     public String getTheSelectedType()
     {
