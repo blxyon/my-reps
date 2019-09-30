@@ -66,7 +66,7 @@ public class MenuController {
     {
 
         test="hey";
-        System.out.println(getDbc()+"HERE 3"+test);
+        System.out.println(getDbc()+"HERE 3"+user+pass);
         MenuModel mM=new MenuModel();
 
         String fNames=fNamesTextA.getText();

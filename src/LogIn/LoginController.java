@@ -15,6 +15,7 @@ import java.io.IOException;
 
 public class LoginController {
 
+    String user;
     @FXML
     private TextField EmailEntry;
     @FXML
@@ -27,7 +28,7 @@ public class LoginController {
         //System.out.println(EmailEntry.getText()+" "+PassEntry.getText());
         ModelLogIn modelLogIn=new ModelLogIn();
         boolean succesfulLogIn=false;
-        String user=EmailEntry.getText();
+        user=EmailEntry.getText();
         String pass=PassEntry.getText();
         //System.out.println(emailIn+" "+passIn);
         if(!user.equals("") && !pass.equals("")) {
@@ -55,14 +56,11 @@ public class LoginController {
                         MenuController mC=loader.getController();
                         mC.setCreds(user, pass);
                         mC.setDBC(dbc);
-                        System.out.println(mC.getDbc()+"HERE 0");
 
                         Stage menuStage = new Stage();
                         menuStage.setTitle("Menu");
                         menuStage.setScene(new Scene(root));
-                        System.out.println(mC.getDbc()+"here 1");
                         menuStage.show();
-                        System.out.println(mC.getDbc()+"here 2");
                     }
                     else{
                         System.out.println("Pop: error 2");
